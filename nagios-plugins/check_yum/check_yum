@@ -310,17 +310,16 @@ class YumTester:
     def get_security_updateinfo(self):
         """Fetches errata numbers and package names"""
 
-        cmd = "%s list-security" % YUM
+        cmd = "%s --quiet --security list-security" % YUM
 
         output = self.run(cmd)
 
         errata = []
 
         for line in output:
-	    try:
-                if line.split()[1] != "security":
-                    continue
-            except:
+            try:
+                (advisoryid, etype, package) = line.split()
+            except ValueError:
                 continue
 	    (advisoryid, etype, package) = line.split()
             errata.append( { "name": package, "advisory": advisoryid } )
